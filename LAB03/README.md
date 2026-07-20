@@ -56,8 +56,6 @@
 
 ---
 
-# LAB 1 : Regression
-
 ## 4. Simple Linear Regression
 
 เลือกตัวแปร
@@ -135,8 +133,6 @@ quality
 เพื่อดูว่าโมเดลใดให้ผลการทำนายแม่นยำกว่า
 
 ---
-
-# LAB 2 : Classification
 
 ## 9. Preparing Classification Data
 
@@ -236,8 +232,6 @@ LogisticRegression()
 หลังจากลดมิติข้อมูลด้วย PCA
 
 ---
-
-# LAB 3 : Model Comparison
 
 ## 16. Simple vs Multiple Linear Regression
 
