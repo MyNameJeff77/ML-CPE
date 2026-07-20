@@ -306,7 +306,7 @@ Classification
 
 # สรุปผล
 
-จากการทดลองพบว่า Multiple Linear Regression ให้ผลการทำนายคุณภาพไวน์ดีกว่า Simple Linear Regression เนื่องจากใช้ข้อมูลจากหลาย Feature พร้อมกัน
+ Multiple Linear Regression ให้ผลการทำนายคุณภาพไวน์ดีกว่า Simple Linear Regression เนื่องจากใช้ข้อมูลจากหลาย Feature พร้อมกัน
 
 สำหรับงาน Classification โมเดล Logistic Regression สามารถจำแนกไวน์เป็น Good Wine และ Bad Wine ได้อย่างมีประสิทธิภาพ โดยใช้ Accuracy, Precision, Recall และ F1-score ในการประเมินผล
 
