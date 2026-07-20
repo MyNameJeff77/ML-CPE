@@ -1,4 +1,4 @@
-ชุดข้อมูลที่ใช้ Kaggle https://www.kaggle.com/datasets/yasserh/titanic-dataset?utm_source=chatgpt.com
+# ชุดข้อมูลที่ใช้ Kaggle https://www.kaggle.com/datasets/yasserh/titanic-dataset?utm_source=chatgpt.com
 
 # LAB 1 : Regression (Titanic Dataset)
 
