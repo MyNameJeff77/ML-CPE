@@ -1,3 +1,5 @@
+ที่มาแหล่งข้อมูลจาก Kaggle https://www.kaggle.com/datasets/yasserh/titanic-dataset?utm_source=chatgpt.com
+
 วิธีการดำเนินงาน (Methodology)
 1. โหลดชุดข้อมูล (Load Dataset)
 
@@ -14,7 +16,7 @@
 ตรวจสอบข้อมูลซ้ำ (Duplicate Records) ด้วย df.duplicated().sum()
 ตรวจสอบการกระจายของคลาสในคอลัมน์ Survived โดยใช้ value_counts() และแสดงผลเป็นกราฟแท่ง
 
-3. การแสดงผลข้อมูล (Data Visualization)
+ 3. การแสดงผลข้อมูล (Data Visualization)
 
 ทำการสร้างกราฟเพื่อช่วยให้เข้าใจลักษณะของข้อมูลได้ง่ายขึ้น
 
