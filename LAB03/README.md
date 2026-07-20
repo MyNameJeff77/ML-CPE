@@ -1,7 +1,7 @@
-# ชุดข้อมูลที่ใช้ Kaggle 
-https://www.kaggle.com/datasets/yasserh/titanic-dataset?utm_source=chatgpt.com
-
 # LAB 1 : Regression (Titanic Dataset)
+
+## ชุดข้อมูลที่ใช้ Kaggle 
+https://www.kaggle.com/datasets/yasserh/titanic-dataset?utm_source=chatgpt.com
 
 ## Objective
 ศึกษาการสร้างโมเดล Regression โดยใช้ชุดข้อมูล Titanic เพื่อทำนายอายุ (Age) ของผู้โดยสารจากข้อมูลที่เกี่ยวข้อง
