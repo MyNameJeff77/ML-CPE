@@ -150,7 +150,8 @@ quality_label
 โดยใช้เงื่อนไข
 
 ```
-Quality >= 6
+Quality >= 6 = Good Wine (1)
+Quality < 6 = Bad Wine (0)
 ```
 
 ---
