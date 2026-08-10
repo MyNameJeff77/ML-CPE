@@ -1,0 +1,14 @@
+Dataset: Red Wine Quality
+
+Source: Kaggle
+
+URL:
+https://www.kaggle.com/datasets/uciml/red-wine-quality-cortez-et-al-2009
+
+Dataset File:
+winequality-red.csv
+
+Description:
+The dataset contains physicochemical properties of red wine
+and wine quality ratings.
+
