@@ -1,142 +1,142 @@
-from pathlib import Path
-
+import os
 import joblib
 import numpy as np
-import pandas as pd
 
-from data_loader import load_dataset
-from preprocessing import standardize_data
-from split_data import split_dataset
-from svm_model import create_models, train_models
-from evaluate import evaluate_models
+from data_loader import load_data
+from preprocessing import preprocess_data
+from split_data import split_data
+from svm_model import train_svm
+from evaluate import evaluate_model
+
+from sklearn.preprocessing import StandardScaler
 
 
-OUTPUT_DIR = Path(__file__).parent / "outputs"
-OUTPUT_DIR.mkdir(exist_ok=True)
+# =========================
+# Paths
+# =========================
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DATA_PATH = os.path.join(
+    BASE_DIR,
+    "dataset",
+    "dataset.csv"
+)
+
+OUTPUT_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "outputs"
+)
+
+
+# =========================
+# Main
+# =========================
 
 def main():
 
-    print("=" * 60)
-    print("LAB 05 - Support Vector Machine")
-    print("Red Wine Quality Dataset")
-    print("=" * 60)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # 1. Load Dataset
-    X, y, class_names = load_dataset()
+    print("==============================")
+    print("LAB05 - SVM Wine Classification")
+    print("==============================")
 
-    print("\nDataset Information")
-    print("-" * 60)
+    # 1. Load dataset
+    df = load_data(DATA_PATH)
 
-    print(f"Number of samples : {len(X)}")
-    print(f"Number of features: {X.shape[1]}")
-    print(f"Number of classes : {len(class_names)}")
-
-    print("\nFeatures:")
-    print(list(X.columns))
-
-    print("\nClasses:")
-    for i, name in enumerate(class_names):
-        print(f"{i}: {name}")
-
-    print("\nClass Distribution:")
-    print(y.value_counts().sort_index())
-
-    # 2. Split Dataset
-    X_train, X_test, y_train, y_test = split_dataset(X, y)
-
-    print("\nData Split")
-    print("-" * 60)
-    print(f"Training samples: {len(X_train)}")
-    print(f"Testing samples : {len(X_test)}")
-
-    # 3. Standardization
-    X_train_scaled, X_test_scaled, scaler = standardize_data(
-        X_train,
-        X_test
+    # 2. Preprocessing
+    X, y = preprocess_data(
+        df,
+        quality_threshold=7
     )
 
-    print("\nStandardization completed.")
+    # 3. Train/Test Split
+    X_train, X_test, y_train, y_test = split_data(
+        X,
+        y,
+        test_size=0.2,
+        random_state=42
+    )
 
-    # Save processed data
-    np.save(OUTPUT_DIR / "X_train.npy", X_train_scaled)
-    np.save(OUTPUT_DIR / "X_test.npy", X_test_scaled)
-    np.save(OUTPUT_DIR / "y_train.npy", y_train)
-    np.save(OUTPUT_DIR / "y_test.npy", y_test)
+    # Convert to numpy
+    X_train = X_train.to_numpy()
+    X_test = X_test.to_numpy()
+
+    y_train = y_train.to_numpy()
+    y_test = y_test.to_numpy()
+
+    # 4. Scaling
+    scaler = StandardScaler()
+
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    print("\nFeature scaling completed")
+
+    # Save scaler
+    scaler_path = os.path.join(
+        OUTPUT_DIR,
+        "scaler.pkl"
+    )
 
     joblib.dump(
         scaler,
-        OUTPUT_DIR / "scaler.pkl"
+        scaler_path
     )
 
-    # 4. Create SVM Models
-    models = create_models()
+    # 5. Save train/test data
+    np.save(
+        os.path.join(OUTPUT_DIR, "X_train.npy"),
+        X_train_scaled
+    )
 
-    print("\nSVM Kernels")
-    print("-" * 60)
+    np.save(
+        os.path.join(OUTPUT_DIR, "X_test.npy"),
+        X_test_scaled
+    )
 
-    for name in models:
-        print(f"- {name}")
+    np.save(
+        os.path.join(OUTPUT_DIR, "y_train.npy"),
+        y_train
+    )
 
-    # 5. Train
-    trained_models = train_models(
-        models,
+    np.save(
+        os.path.join(OUTPUT_DIR, "y_test.npy"),
+        y_test
+    )
+
+    # 6. Train SVM
+    model = train_svm(
         X_train_scaled,
         y_train
     )
 
-    print("\nTraining completed.")
+    # 7. Save model
+    model_path = os.path.join(
+        OUTPUT_DIR,
+        "svm_model.pkl"
+    )
 
-    # 6. Evaluate
-    print("\nModel Accuracy")
-    print("-" * 60)
+    joblib.dump(
+        model,
+        model_path
+    )
 
-    results = evaluate_models(
-        trained_models,
+    print(f"\nModel saved to:")
+    print(model_path)
+
+    # 8. Evaluate
+    accuracy = evaluate_model(
+        model,
         X_test_scaled,
         y_test,
-        class_names,
         OUTPUT_DIR
     )
 
-    results_df = pd.DataFrame(results)
-
-    print()
-    print(results_df.to_string(index=False))
-
-    results_df.to_csv(
-        OUTPUT_DIR / "accuracy_results.csv",
-        index=False
-    )
-
-    # 7. Save models
-    joblib.dump(
-        trained_models,
-        OUTPUT_DIR / "svm_models.pkl"
-    )
-
-    # 8. Prediction
-    print("\nPrediction Example")
-    print("-" * 60)
-
-    sample_data = X_test_scaled[:10]
-
-    for name, model in trained_models.items():
-
-        predictions = model.predict(sample_data)
-
-        print(f"\n{name} Kernel:")
-
-        for i, prediction in enumerate(predictions):
-
-            print(
-                f"Sample {i + 1}: "
-                f"{class_names[prediction]}"
-            )
-
-    print("\n" + "=" * 60)
-    print("LAB 05 completed.")
-    print("=" * 60)
+    print("\n==============================")
+    print("Training completed")
+    print(f"Final Accuracy: {accuracy:.4f}")
+    print("==============================")
 
 
 if __name__ == "__main__":

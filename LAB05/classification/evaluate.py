@@ -1,82 +1,65 @@
-from sklearn.metrics import accuracy_score, confusion_matrix
+import os
 import matplotlib.pyplot as plt
 
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    ConfusionMatrixDisplay
+)
 
-def evaluate_models(
-    models,
-    X_test,
-    y_test,
-    class_names,
-    output_dir
-):
 
-    results = []
+def evaluate_model(model, X_test, y_test, output_path):
+    """
+    Evaluate SVM model.
+    """
 
-    for name, model in models.items():
+    y_pred = model.predict(X_test)
 
-        y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
 
-        accuracy = accuracy_score(
+    print("\n==============================")
+    print("SVM Evaluation")
+    print("==============================")
+
+    print(f"Accuracy: {accuracy:.4f}")
+
+    print("\nClassification Report:")
+    print(
+        classification_report(
             y_test,
-            y_pred
+            y_pred,
+            target_names=["Not Good", "Good"]
         )
+    )
 
-        results.append({
-            "Kernel": name,
-            "Accuracy": accuracy
-        })
+    # Confusion Matrix
+    cm = confusion_matrix(y_test, y_pred)
 
-        print(
-            f"{name} Kernel Accuracy: "
-            f"{accuracy:.4f}"
-        )
+    print("Confusion Matrix:")
+    print(cm)
 
-        cm = confusion_matrix(
-            y_test,
-            y_pred
-        )
+    os.makedirs(output_path, exist_ok=True)
 
-        plt.figure(figsize=(6, 5))
+    disp = ConfusionMatrixDisplay(
+        confusion_matrix=cm,
+        display_labels=["Not Good", "Good"]
+    )
 
-        plt.imshow(cm)
+    disp.plot()
 
-        plt.title(
-            f"Confusion Matrix - {name}"
-        )
+    plt.title("SVM - Wine Quality Confusion Matrix")
+    plt.tight_layout()
 
-        plt.xlabel("Predicted")
-        plt.ylabel("Actual")
+    save_path = os.path.join(
+        output_path,
+        "confusion_matrix.png"
+    )
 
-        plt.xticks(
-            range(len(class_names)),
-            class_names,
-            rotation=45
-        )
+    plt.savefig(save_path)
+    plt.close()
 
-        plt.yticks(
-            range(len(class_names)),
-            class_names
-        )
+    print(f"\nConfusion matrix saved to:")
+    print(save_path)
 
-        for i in range(len(cm)):
-            for j in range(len(cm[i])):
-
-                plt.text(
-                    j,
-                    i,
-                    cm[i][j],
-                    ha="center",
-                    va="center"
-                )
-
-        plt.tight_layout()
-
-        filename = (
-            output_dir
-            / f"confusion_matrix_{name.lower()}.png"
-        )
-
-        plt.savefig(filename)
-        plt.close()
-
-    return results
+    return accuracy

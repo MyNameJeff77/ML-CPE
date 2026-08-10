@@ -1,11 +1,32 @@
-from sklearn.preprocessing import StandardScaler
+import pandas as pd
 
 
-def standardize_data(X_train, X_test):
+def preprocess_data(df, quality_threshold=7):
+    """
+    Prepare features and target.
 
-    scaler = StandardScaler()
+    quality >= 7 -> Good Wine (1)
+    quality < 7  -> Not Good Wine (0)
+    """
 
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
+    df = df.copy()
 
-    return X_train_scaled, X_test_scaled, scaler
+    # Create binary target
+    df["quality_label"] = (
+        df["quality"] >= quality_threshold
+    ).astype(int)
+
+    # Features
+    X = df.drop(columns=["quality", "quality_label"])
+
+    # Target
+    y = df["quality_label"]
+
+    print("\nPreprocessing completed")
+    print(f"X shape: {X.shape}")
+    print(f"y shape: {y.shape}")
+
+    print("\nClass distribution:")
+    print(y.value_counts().sort_index())
+
+    return X, y

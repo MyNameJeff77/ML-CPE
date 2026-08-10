@@ -1,39 +1,21 @@
 from sklearn.svm import SVC
 
 
-def create_models():
+def train_svm(X_train, y_train):
+    """
+    Train SVM classifier.
+    """
 
-    models = {
+    model = SVC(
+        kernel="rbf",
+        C=10,
+        gamma="scale",
+        class_weight="balanced",
+        random_state=42
+    )
 
-        "Linear": SVC(
-            kernel="linear",
-            random_state=42
-        ),
+    model.fit(X_train, y_train)
 
-        "Polynomial": SVC(
-            kernel="poly",
-            degree=3,
-            random_state=42
-        ),
+    print("\nSVM training completed")
 
-        "RBF": SVC(
-            kernel="rbf",
-            random_state=42
-        )
-
-    }
-
-    return models
-
-
-def train_models(models, X_train, y_train):
-
-    trained_models = {}
-
-    for name, model in models.items():
-
-        model.fit(X_train, y_train)
-
-        trained_models[name] = model
-
-    return trained_models
+    return model

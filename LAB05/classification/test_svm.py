@@ -1,82 +1,92 @@
-from sklearn.metrics import accuracy_score, confusion_matrix
-import matplotlib.pyplot as plt
+import os
+import joblib
+import numpy as np
+
+from sklearn.metrics import accuracy_score
 
 
-def evaluate_models(
-    models,
-    X_test,
-    y_test,
-    class_names,
-    output_dir
-):
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    results = []
+OUTPUT_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "outputs"
+)
 
-    for name, model in models.items():
 
-        y_pred = model.predict(X_test)
+def main():
 
-        accuracy = accuracy_score(
-            y_test,
-            y_pred
+    print("==============================")
+    print("Testing Saved SVM Model")
+    print("==============================")
+
+    # Load model
+    model = joblib.load(
+        os.path.join(
+            OUTPUT_DIR,
+            "svm_model.pkl"
+        )
+    )
+
+    # Load scaler
+    scaler = joblib.load(
+        os.path.join(
+            OUTPUT_DIR,
+            "scaler.pkl"
+        )
+    )
+
+    # Load test data
+    X_test = np.load(
+        os.path.join(
+            OUTPUT_DIR,
+            "X_test.npy"
+        )
+    )
+
+    y_test = np.load(
+        os.path.join(
+            OUTPUT_DIR,
+            "y_test.npy"
+        )
+    )
+
+    # Prediction
+    y_pred = model.predict(X_test)
+
+    # Accuracy
+    accuracy = accuracy_score(
+        y_test,
+        y_pred
+    )
+
+    print("\nModel loaded successfully")
+
+    print(f"Test samples: {len(X_test)}")
+
+    print(f"Accuracy: {accuracy:.4f}")
+
+    print("\nSample predictions:")
+
+    for i in range(min(10, len(y_pred))):
+
+        actual = (
+            "Good"
+            if y_test[i] == 1
+            else "Not Good"
         )
 
-        results.append({
-            "Kernel": name,
-            "Accuracy": accuracy
-        })
+        predicted = (
+            "Good"
+            if y_pred[i] == 1
+            else "Not Good"
+        )
 
         print(
-            f"{name} Kernel Accuracy: "
-            f"{accuracy:.4f}"
+            f"{i + 1}. "
+            f"Actual: {actual:<8} "
+            f"Predicted: {predicted}"
         )
 
-        cm = confusion_matrix(
-            y_test,
-            y_pred
-        )
 
-        plt.figure(figsize=(6, 5))
-
-        plt.imshow(cm)
-
-        plt.title(
-            f"Confusion Matrix - {name}"
-        )
-
-        plt.xlabel("Predicted")
-        plt.ylabel("Actual")
-
-        plt.xticks(
-            range(len(class_names)),
-            class_names,
-            rotation=45
-        )
-
-        plt.yticks(
-            range(len(class_names)),
-            class_names
-        )
-
-        for i in range(len(cm)):
-            for j in range(len(cm[i])):
-
-                plt.text(
-                    j,
-                    i,
-                    cm[i][j],
-                    ha="center",
-                    va="center"
-                )
-
-        plt.tight_layout()
-
-        filename = (
-            output_dir
-            / f"confusion_matrix_{name.lower()}.png"
-        )
-
-        plt.savefig(filename)
-        plt.close()
-
-    return results
+if __name__ == "__main__":
+    main()
