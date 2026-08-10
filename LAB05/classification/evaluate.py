@@ -2,28 +2,48 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 import matplotlib.pyplot as plt
 
 
-def evaluate_models(models, X_test, y_test, class_names, output_dir):
+def evaluate_models(
+    models,
+    X_test,
+    y_test,
+    class_names,
+    output_dir
+):
+
     results = []
 
     for name, model in models.items():
 
         y_pred = model.predict(X_test)
 
-        accuracy = accuracy_score(y_test, y_pred)
+        accuracy = accuracy_score(
+            y_test,
+            y_pred
+        )
 
         results.append({
             "Kernel": name,
             "Accuracy": accuracy
         })
 
-        print(f"{name} Kernel Accuracy: {accuracy:.4f}")
+        print(
+            f"{name} Kernel Accuracy: "
+            f"{accuracy:.4f}"
+        )
 
-        cm = confusion_matrix(y_test, y_pred)
+        cm = confusion_matrix(
+            y_test,
+            y_pred
+        )
 
         plt.figure(figsize=(6, 5))
+
         plt.imshow(cm)
 
-        plt.title(f"Confusion Matrix - {name}")
+        plt.title(
+            f"Confusion Matrix - {name}"
+        )
+
         plt.xlabel("Predicted")
         plt.ylabel("Actual")
 
@@ -40,6 +60,7 @@ def evaluate_models(models, X_test, y_test, class_names, output_dir):
 
         for i in range(len(cm)):
             for j in range(len(cm[i])):
+
                 plt.text(
                     j,
                     i,
@@ -51,8 +72,8 @@ def evaluate_models(models, X_test, y_test, class_names, output_dir):
         plt.tight_layout()
 
         filename = (
-            output_dir /
-            f"confusion_matrix_{name.lower()}.png"
+            output_dir
+            / f"confusion_matrix_{name.lower()}.png"
         )
 
         plt.savefig(filename)

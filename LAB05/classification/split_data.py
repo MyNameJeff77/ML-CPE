@@ -2,6 +2,7 @@ from sklearn.model_selection import train_test_split
 
 
 def split_dataset(X, y):
+
     return train_test_split(
         X,
         y,

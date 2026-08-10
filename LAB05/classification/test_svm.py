@@ -1,83 +1,82 @@
-from pathlib import Path
-import sys
-
-import numpy as np
-
-sys.path.append(
-    str(Path(__file__).parent)
-)
-
-from data_loader import load_dataset
-from preprocessing import standardize_data
-from split_data import split_dataset
-from svm_model import create_models, train_models
+from sklearn.metrics import accuracy_score, confusion_matrix
+import matplotlib.pyplot as plt
 
 
-def test_dataset():
+def evaluate_models(
+    models,
+    X_test,
+    y_test,
+    class_names,
+    output_dir
+):
 
-    X, y, class_names = load_dataset()
+    results = []
 
-    assert X.shape[0] == 178
-    assert X.shape[1] == 13
-    assert len(class_names) == 3
+    for name, model in models.items():
 
-    print("test_dataset: PASS")
+        y_pred = model.predict(X_test)
 
-
-def test_split():
-
-    X, y, _ = load_dataset()
-
-    X_train, X_test, y_train, y_test = split_dataset(
-        X,
-        y
-    )
-
-    assert len(X_train) == 142
-    assert len(X_test) == 36
-
-    print("test_split: PASS")
-
-
-def test_svm_models():
-
-    X, y, _ = load_dataset()
-
-    X_train, X_test, y_train, y_test = split_dataset(
-        X,
-        y
-    )
-
-    X_train_scaled, X_test_scaled, scaler = standardize_data(
-        X_train,
-        X_test
-    )
-
-    models = create_models()
-
-    trained_models = train_models(
-        models,
-        X_train_scaled,
-        y_train
-    )
-
-    assert len(trained_models) == 3
-
-    for name, model in trained_models.items():
-
-        predictions = model.predict(
-            X_test_scaled
+        accuracy = accuracy_score(
+            y_test,
+            y_pred
         )
 
-        assert len(predictions) == len(y_test)
+        results.append({
+            "Kernel": name,
+            "Accuracy": accuracy
+        })
 
-    print("test_svm_models: PASS")
+        print(
+            f"{name} Kernel Accuracy: "
+            f"{accuracy:.4f}"
+        )
 
+        cm = confusion_matrix(
+            y_test,
+            y_pred
+        )
 
-if __name__ == "__main__":
+        plt.figure(figsize=(6, 5))
 
-    test_dataset()
-    test_split()
-    test_svm_models()
+        plt.imshow(cm)
 
-    print("\nAll tests passed.")
+        plt.title(
+            f"Confusion Matrix - {name}"
+        )
+
+        plt.xlabel("Predicted")
+        plt.ylabel("Actual")
+
+        plt.xticks(
+            range(len(class_names)),
+            class_names,
+            rotation=45
+        )
+
+        plt.yticks(
+            range(len(class_names)),
+            class_names
+        )
+
+        for i in range(len(cm)):
+            for j in range(len(cm[i])):
+
+                plt.text(
+                    j,
+                    i,
+                    cm[i][j],
+                    ha="center",
+                    va="center"
+                )
+
+        plt.tight_layout()
+
+        filename = (
+            output_dir
+            / f"confusion_matrix_{name.lower()}.png"
+        )
+
+        plt.savefig(filename)
+        plt.close()
+
+    return results

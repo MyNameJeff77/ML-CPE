@@ -2,6 +2,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 def standardize_data(X_train, X_test):
+
     scaler = StandardScaler()
 
     X_train_scaled = scaler.fit_transform(X_train)
