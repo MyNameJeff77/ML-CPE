@@ -10,7 +10,7 @@ from split_data import split_dataset
 from svm_model import train_svm, predict_svm
 from evaluate import evaluate_model
 
-DATA_PATH = "Cats-and-Dogs/PetImages"
+DATA_PATH = "PetImages"
 OUTPUT_DIR = "outputs"
 IMG_SIZE = 100
 TEST_SIZE = 0.2
