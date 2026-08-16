@@ -1,6 +1,7 @@
-Dataset: Cats and Dogs Classification
+Dataset: Cats and Dogs image classification
 
 Source: Kaggle
 
 URL:
-https://www.kaggle.com/datasets/bhavikjikadara/dog-and-cat-classification-dataset
+https://www.kaggle.com/datasets/samuelcortinhas/cats-and-dogs-image-classification?utm_source=chatgpt.com
+
