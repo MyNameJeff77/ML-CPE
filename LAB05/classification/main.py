@@ -3,6 +3,7 @@ import os
 
 import joblib
 import numpy as np
+import matplotlib.pyplot as plt
 
 from data_load import load_data
 from preprocess import to_features
@@ -72,10 +73,41 @@ def main():
     print("\n[Step 5] Testing model...")
     predictions = predict_svm(model, scaler, X_test)
 
-    # Step 6: Evaluation
+     # Step 6: Evaluation
     print("\n[Step 6] Evaluating model...")
     evaluate_model(y_test, predictions, classes,
                    save_path=f"{OUTPUT_DIR}/confusion_matrix.png")
+
+        # Step 7: Save prediction samples
+    print("\n[Step 7] Saving prediction samples...")
+
+    num_samples = min(10, len(X_test))
+
+    plt.figure(figsize=(15, 6))
+
+    for i in range(num_samples):
+        plt.subplot(2, 5, i + 1)
+
+        image = X_test[i].reshape(IMG_SIZE, IMG_SIZE)
+
+        plt.imshow(image, cmap="gray")
+
+        true_label = classes[y_test[i]]
+        pred_label = classes[predictions[i]]
+
+        plt.title(f"True: {true_label}\nPred: {pred_label}")
+        plt.axis("off")
+
+    plt.tight_layout()
+
+    plt.savefig(
+        f"{OUTPUT_DIR}/prediction_sample.png",
+        dpi=150
+    )
+
+    plt.close()
+
+    print(f"Saved: {OUTPUT_DIR}/prediction_sample.png")
 
 
 if __name__ == "__main__":
