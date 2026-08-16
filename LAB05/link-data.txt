@@ -1,14 +1,6 @@
-Dataset: Red Wine Quality
+Dataset: Cats and Dogs Classification
 
 Source: Kaggle
 
 URL:
-https://www.kaggle.com/datasets/uciml/red-wine-quality-cortez-et-al-2009
-
-Dataset File:
-winequality-red.csv
-
-Description:
-The dataset contains physicochemical properties of red wine
-and wine quality ratings.
-
+https://www.kaggle.com/datasets/bhavikjikadara/dog-and-cat-classification-dataset
