@@ -1,0 +1,3 @@
+outputs/*.npy
+outputs/*.pkl
+__pycache__/
