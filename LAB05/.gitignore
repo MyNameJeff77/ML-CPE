@@ -1,0 +1,5 @@
+classification/PetImages/
+classification/__pycache__/
+classification/**/__pycache__/
+*.pyc
+classification/outputs/
