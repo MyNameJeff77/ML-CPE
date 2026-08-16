@@ -1,65 +1,71 @@
-import os
-import matplotlib.pyplot as plt
 
+
+
+import matplotlib
+
+# Set backend before pyplot, so it works without a display
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
-    confusion_matrix,
-    ConfusionMatrixDisplay
+    confusion_matrix
 )
 
 
-def evaluate_model(model, X_test, y_test, output_path):
-    """
-    Evaluate SVM model.
-    """
+def evaluate_model(y_test, predictions, classes, save_path=None):
 
-    y_pred = model.predict(X_test)
+    # Pin label order so target_names always matches the columns
+    labels = list(range(len(classes)))
 
-    accuracy = accuracy_score(y_test, y_pred)
+    # Calculate accuracy
+    accuracy = accuracy_score(y_test, predictions)
 
-    print("\n==============================")
-    print("SVM Evaluation")
-    print("==============================")
-
-    print(f"Accuracy: {accuracy:.4f}")
+    print("\n------------ Evaluation ------------------")
+    print(f"Accuracy: {accuracy * 100:.2f}%")
 
     print("\nClassification Report:")
-    print(
-        classification_report(
-            y_test,
-            y_pred,
-            target_names=["Not Good", "Good"]
-        )
+
+    report = classification_report(
+        y_test,
+        predictions,
+        labels=labels,
+        target_names=classes,
+        zero_division=0
     )
 
-    # Confusion Matrix
-    cm = confusion_matrix(y_test, y_pred)
-
+    print(report)
     print("Confusion Matrix:")
-    print(cm)
 
-    os.makedirs(output_path, exist_ok=True)
+    matrix = confusion_matrix(y_test, predictions, labels=labels)
+    print(matrix)
 
-    disp = ConfusionMatrixDisplay(
-        confusion_matrix=cm,
-        display_labels=["Not Good", "Good"]
-    )
-
-    disp.plot()
-
-    plt.title("SVM - Wine Quality Confusion Matrix")
-    plt.tight_layout()
-
-    save_path = os.path.join(
-        output_path,
-        "confusion_matrix.png"
-    )
-
-    plt.savefig(save_path)
-    plt.close()
-
-    print(f"\nConfusion matrix saved to:")
-    print(save_path)
+    if save_path:
+        plot_confusion_matrix(matrix, classes, save_path)
+        print(f"Saved: {save_path}")
 
     return accuracy
+
+
+def plot_confusion_matrix(matrix, classes, save_path):
+
+    fig, ax = plt.subplots(figsize=(5, 5))
+    ax.imshow(matrix, cmap="Blues")
+
+    ax.set_xticks(np.arange(len(classes)), classes)
+    ax.set_yticks(np.arange(len(classes)), classes)
+    ax.set_xlabel("Predicted")
+    ax.set_ylabel("True")
+    ax.set_title("Confusion Matrix")
+
+    threshold = matrix.max() / 2
+    for i in range(len(classes)):
+        for j in range(len(classes)):
+            ax.text(j, i, matrix[i, j], ha="center", va="center",
+                    color="white" if matrix[i, j] > threshold else "black")
+
+    fig.tight_layout()
+    fig.savefig(save_path, dpi=150)
+    plt.close(fig)

@@ -1,142 +1,81 @@
+import json
 import os
+
 import joblib
 import numpy as np
 
-from data_loader import load_data
-from preprocessing import preprocess_data
-from split_data import split_data
-from svm_model import train_svm
+from data_load import load_data
+from preprocess import to_features
+from split_data import split_dataset
+from svm_model import train_svm, predict_svm
 from evaluate import evaluate_model
 
-from sklearn.preprocessing import StandardScaler
+DATA_PATH = "Cats-and-Dogs/PetImages"
+OUTPUT_DIR = "outputs"
+IMG_SIZE = 100
+TEST_SIZE = 0.2
+MAX_PER_CLASS = 3000   # None = use all images (very slow)
 
-
-# =========================
-# Paths
-# =========================
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-DATA_PATH = os.path.join(
-    BASE_DIR,
-    "dataset",
-    "dataset.csv"
-)
-
-OUTPUT_DIR = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "outputs"
-)
-
-
-# =========================
-# Main
-# =========================
 
 def main():
 
+    print("--" * 30)
+    print("SVM Image Recognition: Cat vs Dog")
+    print("--" * 30)
+
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    print("==============================")
-    print("LAB05 - SVM Wine Classification")
-    print("==============================")
+    # Step 1: Load Dataset
+    print("\n[Step 1] Loading dataset...")
+    images, labels, classes = load_data(DATA_PATH, IMG_SIZE, MAX_PER_CLASS)
 
-    # 1. Load dataset
-    df = load_data(DATA_PATH)
+    np.save(f"{OUTPUT_DIR}/images.npy", images)
+    np.save(f"{OUTPUT_DIR}/labels.npy", labels)
+    with open(f"{OUTPUT_DIR}/classes.json", "w") as f:
+        json.dump(classes, f)
 
-    # 2. Preprocessing
-    X, y = preprocess_data(
-        df,
-        quality_threshold=7
-    )
+    print("\nDataset loaded successfully.")
+    print(f"Total images : {len(images)}")
+    print(f"Classes      : {classes}")
 
-    # 3. Train/Test Split
-    X_train, X_test, y_train, y_test = split_data(
-        X,
-        y,
-        test_size=0.2,
-        random_state=42
-    )
+    # Step 2: Preprocessing
+    print("\n[Step 2] preprocess images...")
 
-    # Convert to numpy
-    X_train = X_train.to_numpy()
-    X_test = X_test.to_numpy()
+    X = to_features(images)
+    y = labels
+    print(f"Feature shape: {X.shape}")
 
-    y_train = y_train.to_numpy()
-    y_test = y_test.to_numpy()
+    # Step 3: Split Dataset
+    print("\n[Step 3] Splitting dataset...")
 
-    # 4. Scaling
-    scaler = StandardScaler()
+    X_train, X_test, y_train, y_test = split_dataset(X, y, TEST_SIZE)
 
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
+    np.save(f"{OUTPUT_DIR}/X_train.npy", X_train)
+    np.save(f"{OUTPUT_DIR}/X_test.npy", X_test)
+    np.save(f"{OUTPUT_DIR}/y_train.npy", y_train)
+    np.save(f"{OUTPUT_DIR}/y_test.npy", y_test)
 
-    print("\nFeature scaling completed")
+    print(f"Training samples: {len(X_train)}")
+    print(f"Testing samples : {len(X_test)}")
 
-    # Save scaler
-    scaler_path = os.path.join(
-        OUTPUT_DIR,
-        "scaler.pkl"
-    )
+    # Step 4: Train SVM
+    print("\n[Step 4] Training SVM...")
 
-    joblib.dump(
-        scaler,
-        scaler_path
-    )
+    model, scaler = train_svm(X_train, y_train)
 
-    # 5. Save train/test data
-    np.save(
-        os.path.join(OUTPUT_DIR, "X_train.npy"),
-        X_train_scaled
-    )
+    joblib.dump(model, f"{OUTPUT_DIR}/svm_model.pkl")
+    joblib.dump(scaler, f"{OUTPUT_DIR}/scaler.pkl")
 
-    np.save(
-        os.path.join(OUTPUT_DIR, "X_test.npy"),
-        X_test_scaled
-    )
+    print("SVM training completed.")
 
-    np.save(
-        os.path.join(OUTPUT_DIR, "y_train.npy"),
-        y_train
-    )
+    # Step 5: Prediction
+    print("\n[Step 5] Testing model...")
+    predictions = predict_svm(model, scaler, X_test)
 
-    np.save(
-        os.path.join(OUTPUT_DIR, "y_test.npy"),
-        y_test
-    )
-
-    # 6. Train SVM
-    model = train_svm(
-        X_train_scaled,
-        y_train
-    )
-
-    # 7. Save model
-    model_path = os.path.join(
-        OUTPUT_DIR,
-        "svm_model.pkl"
-    )
-
-    joblib.dump(
-        model,
-        model_path
-    )
-
-    print(f"\nModel saved to:")
-    print(model_path)
-
-    # 8. Evaluate
-    accuracy = evaluate_model(
-        model,
-        X_test_scaled,
-        y_test,
-        OUTPUT_DIR
-    )
-
-    print("\n==============================")
-    print("Training completed")
-    print(f"Final Accuracy: {accuracy:.4f}")
-    print("==============================")
+    # Step 6: Evaluation
+    print("\n[Step 6] Evaluating model...")
+    evaluate_model(y_test, predictions, classes,
+                   save_path=f"{OUTPUT_DIR}/confusion_matrix.png")
 
 
 if __name__ == "__main__":
