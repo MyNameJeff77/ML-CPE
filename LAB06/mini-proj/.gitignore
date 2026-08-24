@@ -1,5 +1,6 @@
 PetImages/
 __pycache__/
+*.pyc
 outputs/features.npy
 outputs/X_train.npy
 outputs/X_test.npy
