@@ -1,0 +1,7 @@
+PetImages/
+__pycache__/
+outputs/features.npy
+outputs/X_train.npy
+outputs/X_test.npy
+outputs/X_val.npy
+outputs/nn_model.keras
