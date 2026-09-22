@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Dataset
+PetImages/
+data/
+dataset/
+
+# Large trained models
+*.keras
+*.h5
+*.ckpt
+
+# NumPy generated data
+*.npy
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dataset / reports
+*.csv
+*.pdf
