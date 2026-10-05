@@ -1,0 +1,7 @@
+{
+  "model": "resnet101",
+  "test_loss": 0.644519567489624,
+  "test_accuracy": 0.6458684802055359,
+  "epochs_trained": 9,
+  "parameters": 22065185
+}

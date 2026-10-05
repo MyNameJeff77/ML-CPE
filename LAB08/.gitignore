@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Dataset
+PetImages/
+split_data/
+
+# Trained model files
+*.keras
+*.h5
+
+# Jupyter
+.ipynb_checkpoints/

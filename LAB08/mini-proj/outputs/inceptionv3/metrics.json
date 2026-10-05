@@ -1,0 +1,7 @@
+{
+  "model": "inceptionv3",
+  "test_loss": 0.1537015438079834,
+  "test_accuracy": 0.941821277141571,
+  "epochs_trained": 10,
+  "parameters": 20090177
+}

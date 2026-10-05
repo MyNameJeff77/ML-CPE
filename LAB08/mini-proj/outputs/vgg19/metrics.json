@@ -1,0 +1,7 @@
+{
+  "model": "vgg19",
+  "test_loss": 0.3583725690841675,
+  "test_accuracy": 0.8271501064300537,
+  "epochs_trained": 10,
+  "parameters": 2422081
+}

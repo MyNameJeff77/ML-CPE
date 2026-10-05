@@ -1,0 +1,7 @@
+{
+  "model": "efficientnetb0",
+  "test_loss": 0.022939590737223625,
+  "test_accuracy": 0.9907251000404358,
+  "epochs_trained": 10,
+  "parameters": 4213668
+}
