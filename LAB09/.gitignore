@@ -1,0 +1,23 @@
+# Python environment
+.venv/
+__pycache__/
+*.py[cod]
+
+# Trained models
+*.keras
+*.h5
+*.pt
+*.pth
+
+# Generated results
+outputs/
+**/outputs/
+runs/
+**/runs/
+
+# Dataset
+LAB09/dataset/
+**/dataset/
+
+# Jupyter
+.ipynb_checkpoints/
