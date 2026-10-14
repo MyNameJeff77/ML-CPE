@@ -3,17 +3,19 @@
 __pycache__/
 *.py[cod]
 
-# Trained models
+# Model files
 *.keras
 *.h5
 *.pt
 *.pth
 
-# Generated results
+# Ignore outputs except sample result images
 outputs/
 **/outputs/
-runs/
-**/runs/
+!outputs/
+!**/outputs/
+!outputs/image_result.jpg
+!**/outputs/image_result.jpg
 
 # Dataset
 LAB09/dataset/
