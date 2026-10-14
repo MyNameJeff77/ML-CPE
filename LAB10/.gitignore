@@ -1,0 +1,30 @@
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Dataset: ไม่อัปโหลดภาพและ Label ทั้งชุด
+dataset/train/
+dataset/valid/
+dataset/test/
+
+# Cache
+*.cache
+
+# Model weights: ไฟล์โมเดลขนาดใหญ่
+*.pt
+*.onnx
+*.engine
+
+# Training artifacts: ไฟล์ชั่วคราว
+runs/*/weights/
+runs/*/train_batch*.jpg
+runs/*/val_batch*.jpg
+
+# Keep source configuration
+!dataset/data.yaml
+
+# Local environment
+.env
